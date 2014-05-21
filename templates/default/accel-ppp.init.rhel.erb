@@ -1,0 +1,122 @@
+#!/bin/sh
+#
+# accel-ppp     accel-ppp service
+#
+# chkconfig:    345 90 15
+#
+# description:  accel-ppp (High performance VPN server application)
+#
+# processname:  accel-pppd
+# config:       /etc/accel-ppp.conf
+# pidfile:      /var/run/accel-ppp/accel-ppp.pid
+#
+# $Id$
+#
+# Source function library
+. /etc/rc.d/init.d/functions
+
+# Get network config
+. /etc/sysconfig/network
+
+ACCEL_PPPD_OPTS="-c /etc/accel-ppp/accel-ppp.conf"
+
+# Check that networking is up.
+if [ ${NETWORKING} = "yes" ]; then
+        if [ ! -f /var/lock/subsys/network -a "$1" != stop -a "$1" != status ]; then
+                echo "accel-ppp network is down"
+                exit 1
+        fi
+else
+        exit 0
+fi
+
+[ -f /etc/sysconfig/accel-ppp ] && . /etc/sysconfig/accel-ppp
+
+pidfile="/var/run/accel-ppp/accel-ppp.pid"
+
+start() {
+        # Check if the service is already running?
+        if [ -f /var/lock/subsys/accel-ppp ]; then
+                echo "accel-pppd is already running"
+                return
+        fi
+
+        echo "Starting accel-pppd"
+        daemon /usr/local/sbin/accel-pppd -d -p $pidfile $ACCEL_PPPD_OPTS
+        RETVAL=$?
+        [ $RETVAL -eq 0 ] && touch /var/lock/subsys/accel-ppp
+}
+
+stop() {
+        if [ ! -f /var/lock/subsys/accel-ppp ]; then
+                echo "accel-pppd is not running"
+                return
+        fi
+
+        # Stop daemons.
+        echo "Stopping accel-pppd"
+        kill -TERM $(cat $pidfile)
+        rm -f /var/lock/subsys/accel-ppp
+        RETVAL=$?
+}
+
+reload() {
+        if [ ! -f /var/lock/subsys/accel-ppp ]; then
+                echo "accel-pppd is not running"
+                RETVAL=7
+                return
+        fi
+
+        echo "Reloading accel-pppd"
+        kill -HUP $(cat $pidfile)
+        RETVAL=$?
+}
+
+condrestart() {
+        if [ ! -f /var/lock/subsys/accel-ppp ]; then
+                echo "accel-pppd is not running"
+                RETVAL=$1
+                return
+        fi
+
+        stop
+        start
+}
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart)
+        stop
+        start
+        ;;
+  try-restart)
+        condrestart 0
+        ;;
+# XXX: duplicate force-reload, remove one depending whether it supports reload or not
+# include force-reload here if program allows reloading without restart
+# otherwise remove reload action and support force-reload as restart if running
+  reload|force-reload)
+        reload
+        ;;
+# XXX: duplicate force-reload, remove one depending whether it supports reload or not
+# use this one if program doesn't support reloading without restart
+  force-reload)
+        condrestart 7
+        ;;
+  status)
+        status accel-pppd
+        RETVAL=$?
+        ;;
+  *)
+        echo "Usage: {start|stop|restart|try-restart|reload|force-reload|status}"
+        exit 3
+esac
+
+exit $RETVAL
