@@ -8,41 +8,44 @@ Requirements
 - Debian-family Linux Distributions
 - RedHat-family Linux Distributions
 
+### Cookbooks
+- Depends on `checkinstall` cookbook
+
 Attributes
 ----------
 ### Recommended tunables
 
-* `accel[:url]`
+* `accel['url']`
   - String. Points to the accel source codes archive location
 
-* `accel[:version]`
+* `accel['version']`
   - String. accel version to be compiled
 
-* `accel[:radius]`
+* `accel['radius']`
   - Bool. Flag to compile RADIUS support
-  - Defaults to true
+  - Defaults to `true`
 
-* `accel[:snmp]`
+* `accel['snmp']`
   - Bool. Flag to compile SNMP support
-  - Defaults to true
+  - Defaults to `true`
 
-* `accel[:shaper]`
+* `accel['shaper']`
   - Bool. Flag to compile shaper support
-  - Defaults to true
+  - Defaults to `true`
 
-* `accel[:modules][:log]`
+* `accel['modules']['log']`
   - Array. Lists the log destinations
 
-* `accel[:modules][:control]`
+* `accel['modules']['control']`
   - Array. Lists the activated control protocols
 
-* `accel[:modules][:auth]`
+* `accel['modules']['auth']`
   - Array. Lists the accepted auth protocols
 
-* `accel[:modules][:other]`
+* `accel['modules']['other']`
   - Array. Lists support protocols
 
-* `accel[:modules][:ipv6]`
+* `accel['modules']['ipv6']`
   - Array. Lists IPv6 modules
 
 Usage

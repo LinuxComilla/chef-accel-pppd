@@ -18,22 +18,29 @@
 # limitations under the License.
 #
 
-user node[:accel][:user] do
+user node['accel']['user'] do
   comment "Accel-PPP user"
   system true
   shell "/bin/false"
 end
 
-group node[:accel][:group] do
+group node['accel']['group'] do
   system true
 end
 
-case node[:platform]
+case node['platform']
   when "debian", "ubuntu"
-    node.default[:checkinstall][:options] = "-y"
-    node.default[:version_check][:command] = "dpkg -s accel-ppp"
-    %w{cmake libpcre3-dev libnl2-dev libsnmp-dev snmp-mibs-downloader checkinstall}.each do |pkg|
+    %w{libpcre3-dev libsnmp-dev snmp-mibs-downloader}.each do |pkg|
       package pkg do
+        action :install
+      end
+    end
+    if Gem::Version.new(node['lsb']['release']) >= Gem::Version.new("13.10")
+      package "libnl-dev" do
+        action :install
+      end
+    else
+      package "libnl2-dev" do
         action :install
       end
     end
@@ -48,9 +55,7 @@ case node[:platform]
       action :create_if_missing
     end
   when "redhat", "centos", "amazon", "scientific"
-    node.default[:checkinstall][:options] = "-R -y --install=yes"
-    node.default[:version_check][:command] = "rpm -qi accel-ppp"
-    %w{cmake pcre-devel libnl-devel net-snmp-devel}.each do |pkg|
+    %w{pcre-devel libnl-devel net-snmp-devel}.each do |pkg|
       package pkg do
         action :install
       end
@@ -61,4 +66,4 @@ case node[:platform]
     end
 end
 
-include_recipe "accel-ppp::#{node[:accel][:install_method]}"
+include_recipe "accel-ppp::#{node['accel']['install_method']}"

@@ -18,9 +18,9 @@
 # limitations under the License.
 #
 
-case node[:platform]
+case node['platform']
   when "debian", "ubuntu"
-    accel_init = "accel-ppp.init.debian.erb"
+    accel_init = "accel-ppp.init.erb"
   when "redhat", "centos", "amazon", "scientific"
     accel_init = "accel-ppp.init.rhel.erb"
 end
@@ -34,8 +34,8 @@ end
 
 template "/etc/accel-ppp/accel-ppp.conf" do
   source "accel-ppp.conf.erb"
-  owner  node[:accel][:user]
-  group  node[:accel][:group]
+  owner  node['accel']['user']
+  group  node['accel']['group']
   mode   00644
   notifies :restart, "service[accel-ppp]"
 end

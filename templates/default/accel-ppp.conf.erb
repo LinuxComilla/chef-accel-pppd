@@ -1,23 +1,23 @@
 [modules]
-<% node[:accel][:modules][:log].each do |log_module| -%>
+<% node['accel']['modules']['log'].each do |log_module| -%>
   <% if log_module =~ /file|syslog|tcp|pgsql/ -%>
 log_<%= log_module %>
   <% end -%>
 <% end -%>
 
-<% node[:accel][:modules][:control].each do |control_module| -%>
+<% node['accel']['modules']['control'].each do |control_module| -%>
   <% if control_module =~ /pptp|l2tp|pppoe|ipoe/ -%>
 <%= control_module %>
   <% end -%>
 <% end -%>
 
-<% node[:accel][:modules][:auth].each do |auth_module| -%>
+<% node['accel']['modules']['auth'].each do |auth_module| -%>
   <% if auth_module =~ /mschap_v2|mschap_v1|chap_md5|pap/ -%>
 auth_<%= auth_module %>
   <% end -%>
 <% end -%>
 
-<% node[:accel][:modules][:other].each do |other_module| -%>
+<% node['accel']['modules']['other'].each do |other_module| -%>
   <% if other_module =~ /radius|ippool|pppd_compat|shaper|chap-secrets|net-snmp|logwtmp|connlimit/ -%>
     <% if other_module == "pppd_compat" -%>
 sigchld
@@ -26,253 +26,253 @@ sigchld
   <% end -%>
 <% end -%>
 
-<% node[:accel][:modules][:ipv6].each do |ipv6| -%>
+<% node['accel']['modules']['ipv6'].each do |ipv6| -%>
   <% if ipv6 =~ /ipv6_nd|ipv6_dhcp|ipv6pool/ -%>
 <%= ipv6 %>
   <% end -%>
 <% end -%>
 
 [core]
-log-error=<%= node[:accel][:log][:dir] %>/core.log
-thread-count=<%= node[:accel][:core][:threads] %>
+log-error=<%= node['accel']['log']['dir'] %>/core.log
+thread-count=<%= node['accel']['core']['threads'] %>
 
 [ppp]
-verbose=<%= node[:accel][:ppp][:verbose] %>
-min-mtu=<%= node[:accel][:ppp][:min_mtu] %>
-mtu=<%= node[:accel][:ppp][:mtu] %>
-mru=<%= node[:accel][:ppp][:mru] %>
-ccp=<%= node[:accel][:ppp][:ccp] %>
-<% if node[:accel][:ppp][:sid_case] != false -%>
-sid-case=<%= node[:accel][:ppp][:sid_case] %>
+verbose=<%= node['accel']['ppp']['verbose'] %>
+min-mtu=<%= node['accel']['ppp']['min_mtu'] %>
+mtu=<%= node['accel']['ppp']['mtu'] %>
+mru=<%= node['accel']['ppp']['mru'] %>
+ccp=<%= node['accel']['ppp']['ccp'] %>
+<% if node['accel']['ppp']['sid_case'] != false -%>
+sid-case=<%= node['accel']['ppp']['sid_case'] %>
 <% end -%>
-check-ip=<%= node[:accel][:ppp][:check_ip] %>
-<% if node[:accel][:ppp][:single_session] != false -%>
-single-session=<%= node[:accel][:ppp][:single_session] %>
+check-ip=<%= node['accel']['ppp']['check_ip'] %>
+<% if node['accel']['ppp']['single_session'] != false -%>
+single-session=<%= node['accel']['ppp']['single_session'] %>
 <% end -%>
-<% if node[:accel][:ppp][:mppe] != false -%>
-mppe=<%= node[:accel][:ppp][:mppe] %>
+<% if node['accel']['ppp']['mppe'] != false -%>
+mppe=<%= node['accel']['ppp']['mppe'] %>
 <% end -%>
-ipv4=<%= node[:accel][:ppp][:ipv4] %>
-<% if node[:accel][:modules][:ipv6].empty? -%>
+ipv4=<%= node['accel']['ppp']['ipv4'] %>
+<% if node['accel']['modules']['ipv6'].empty? -%>
 ipv6=deny
 <% end -%>
-lcp-echo-interval=<%= node[:accel][:ppp][:lcp_echo_interval] %>
-lcp-echo-failure=<%= node[:accel][:ppp][:lcp_echo_failure] %>
-lcp-echo-timeout=<%= node[:accel][:ppp][:lcp_echo_timeout] %>
+lcp-echo-interval=<%= node['accel']['ppp']['lcp_echo_interval'] %>
+lcp-echo-failure=<%= node['accel']['ppp']['lcp_echo_failure'] %>
+lcp-echo-timeout=<%= node['accel']['ppp']['lcp_echo_timeout'] %>
 
 [auth]
 #any-login=0
 #noauth=0
 
 [pptp]
-<% if node[:accel][:modules][:control].include?("pptp") -%>
-echo-interval=<%= node[:accel][:pptp][:echo_interval] %>
-echo-failure=<%= node[:accel][:pptp][:echo_failure] %>
-mppe=<%= node[:accel][:pptp][:mppe] %>
-ip-pool=<%= node[:accel][:pptp][:ip_pool][:name] %>
-verbose=<%= node[:accel][:pptp][:verbose] %>
+<% if node['accel']['modules']['control'].include?("pptp") -%>
+echo-interval=<%= node['accel']['pptp']['echo_interval'] %>
+echo-failure=<%= node['accel']['pptp']['echo_failure'] %>
+mppe=<%= node['accel']['pptp']['mppe'] %>
+ip-pool=<%= node['accel']['pptp']['ip_pool']['name'] %>
+verbose=<%= node['accel']['pptp']['verbose'] %>
 <% end -%>
 
 [pppoe]
-<% if node[:accel][:modules][:control].include?("pppoe") -%>
-  <% node[:accel][:pppoe][:interface].each do |interface, padi| -%>
+<% if node['accel']['modules']['control'].include?("pppoe") -%>
+  <% node['accel']['pppoe']['interface'].each do |interface, padi| -%>
     <% if not padi.nil? -%>
 interface=<%= interface %>,padi-limit=<%= padi %>
     <% else %>
 interface=<%= interface %>
     <% end -%>
   <% end -%>
-  <% if node[:accel][:pppoe][:ac_name] != false -%>
-ac-name=<%= node[:accel][:pppoe][:ac_name] %>
+  <% if node['accel']['pppoe']['ac_name'] != false -%>
+ac-name=<%= node['accel']['pppoe']['ac_name'] %>
   <% end -%>
-  <% if node[:accel][:pppoe][:service_name] != false -%>
-service-name=<%= node[:accel][:pppoe][:service_name] %>
+  <% if node['accel']['pppoe']['service_name'] != false -%>
+service-name=<%= node['accel']['pppoe']['service_name'] %>
   <% end -%>
-  <% if node[:accel][:pppoe][:pado_delay] != false -%>
-pado-delay=<%= node[:accel][:pppoe][:pado_delay] %>
+  <% if node['accel']['pppoe']['pado_delay'] != false -%>
+pado-delay=<%= node['accel']['pppoe']['pado_delay'] %>
   <% end -%>
-  <% if node[:accel][:pppoe][:ifname_in_sid] != false -%>
-ifname-in-sid=<%= node[:accel][:pppoe][:ifname_in_sid] %>
+  <% if node['accel']['pppoe']['ifname_in_sid'] != false -%>
+ifname-in-sid=<%= node['accel']['pppoe']['ifname_in_sid'] %>
   <% end -%>
-  <% if node[:accel][:pppoe][:tr101] != false -%>
-tr101=<%= node[:accel][:pppoe][:tr101] %>
+  <% if node['accel']['pppoe']['tr101'] != false -%>
+tr101=<%= node['accel']['pppoe']['tr101'] %>
   <% end -%>
-  <% if node[:accel][:pppoe][:padi_limit] != false -%>
-padi-limit=<%= node[:accel][:pppoe][:padi_limit] %>
+  <% if node['accel']['pppoe']['padi_limit'] != false -%>
+padi-limit=<%= node['accel']['pppoe']['padi_limit'] %>
   <% end -%>
-  <% if node[:accel][:pppoe][:ip_pool] != false -%>
-ip-pool=<%= node[:accel][:pppoe][:ip_pool] %>
+  <% if node['accel']['pppoe']['ip_pool'] != false -%>
+ip-pool=<%= node['accel']['pppoe']['ip_pool'] %>
   <% end -%>
-  <% if node[:accel][:pppoe][:mppe] != false -%>
-mppe=<%= node[:accel][:pppoe][:mppe] %>
+  <% if node['accel']['pppoe']['mppe'] != false -%>
+mppe=<%= node['accel']['pppoe']['mppe'] %>
   <% end -%>
-verbose=<%= node[:accel][:pppoe][:verbose] %>
+verbose=<%= node['accel']['pppoe']['verbose'] %>
 <% end -%>
 
 [l2tp]
-<% if node[:accel][:modules][:control].include?("l2tp") -%>
-dictionary=<%= node[:accel][:l2tp][:dictionary] %>
-hello-interval=<%= node[:accel][:l2tp][:hello_interval] %>
-timeout=<%= node[:accel][:l2tp][:timeout] %>
-rtimeout=<%= node[:accel][:l2tp][:rtimeout] %>
-retransmit=<%= node[:accel][:l2tp][:retransmit] %>
-host-name=<%= node[:fqdn] %>
-dir300_quirk=<%= node[:accel][:l2tp][:dir300_quirk] %>
-mppe=<%= node[:accel][:l2tp][:mppe] %>
-ip-pool=<%= node[:accel][:l2tp][:ip_pool][:name] %>
-verbose=<%= node[:accel][:l2tp][:verbose] %>
+<% if node['accel']['modules']['control'].include?("l2tp") -%>
+dictionary=<%= node['accel']['l2tp']['dictionary'] %>
+hello-interval=<%= node['accel']['l2tp']['hello_interval'] %>
+timeout=<%= node['accel']['l2tp']['timeout'] %>
+rtimeout=<%= node['accel']['l2tp']['rtimeout'] %>
+retransmit=<%= node['accel']['l2tp']['retransmit'] %>
+host-name=<%= node['fqdn'] %>
+dir300_quirk=<%= node['accel']['l2tp']['dir300_quirk'] %>
+mppe=<%= node['accel']['l2tp']['mppe'] %>
+ip-pool=<%= node['accel']['l2tp']['ip_pool']['name'] %>
+verbose=<%= node['accel']['l2tp']['verbose'] %>
 <% end -%>
 
 [dns]
-dns1=<%= node[:accel][:dns][:first] %>
-dns2=<%= node[:accel][:dns][:second] %>
+dns1=<%= node['accel']['dns']['first'] %>
+dns2=<%= node['accel']['dns']['second'] %>
 
 [wins]
-<% if node[:accel][:wins_enable] != false -%>
-wins1=<%= node[:accel][:wins][:first] %>
-wins2=<%= node[:accel][:wins][:second] %>
+<% if node['accel']['wins_enable'] != false -%>
+wins1=<%= node['accel']['wins']['first'] %>
+wins2=<%= node['accel']['wins']['second'] %>
 <% end -%>
 
 [radius]
-<% if node[:accel][:modules][:other].include?("radius") -%>
-dictionary=<%= node[:accel][:radius][:dictionary] %>
-  <% if node[:accel][:radius][:nas_identifier] != false -%>
-nas-identifier=<%= node[:accel][:radius][:nas_identifier] %>
+<% if node['accel']['modules']['other'].include?("radius") -%>
+dictionary=<%= node['accel']['radius']['dictionary'] %>
+  <% if node['accel']['radius']['nas_identifier'] != false -%>
+nas-identifier=<%= node['accel']['radius']['nas_identifier'] %>
   <% end -%>
-nas-ip-address=<%= node[:ipaddress] %>
-  <% node[:accel][:radius][:hosts].each do |hostname,ipaddress| -%>
+nas-ip-address=<%= node['ipaddress'] %>
+  <% node['radius']['hosts'].each do |hostname,ipaddress| -%>
 # <%= hostname %>
-server=<%= ipaddress %>,<%= node[:accel][:radius][:secret] %>,auth-port=<%= node[:accel][:radius][:auth_port] %>,acct-port=<%= node[:accel][:radius][:acct_port] %>,req-limit=<%= node[:accel][:radius][:req_limit] %>,fail-time=<%= node[:accel][:radius][:fail_time] %>
+server=<%= ipaddress %>,<%= node['accel']['radius']['secret'] %>,auth-port=<%= node['accel']['radius']['auth_port'] %>,acct-port=<%= node['accel']['radius']['acct_port'] %>,req-limit=<%= node['accel']['radius']['req_limit'] %>,fail-time=<%= node['accel']['radius']['fail_time'] %>
   <% end -%>
-dae-server=<%= node[:ipaddress] %>:<%= node[:accel][:radius][:dae_port] %>,<%= node[:accel][:radius][:dae_secret] %>
-verbose=<%= node[:accel][:radius][:verbose] %>
-interim-verbose=<%= node[:accel][:radius][:interim_verbose] %>
-timeout=<%= node[:accel][:radius][:timeout] %>
-max-try=<%= node[:accel][:radius][:max_try] %>
-acct-interim-interval=<%= node[:accel][:radius][:acct_interim_interval] %>
-acct-timeout=<%= node[:accel][:radius][:acct_timeout] %>
-acct-delay-time=<%= node[:accel][:radius][:acct_delay_time] %>
+dae-server=<%= node['ipaddress'] %>:<%= node['accel']['radius']['dae_port'] %>,<%= node['accel']['radius']['dae_secret'] %>
+verbose=<%= node['accel']['radius']['verbose'] %>
+interim-verbose=<%= node['accel']['radius']['interim_verbose'] %>
+timeout=<%= node['accel']['radius']['timeout'] %>
+max-try=<%= node['accel']['radius']['max_try'] %>
+acct-interim-interval=<%= node['accel']['radius']['acct_interim_interval'] %>
+acct-timeout=<%= node['accel']['radius']['acct_timeout'] %>
+acct-delay-time=<%= node['accel']['radius']['acct_delay_time'] %>
 <% end -%>
 
 [client-ip-range]
-<% if node[:accel][:client_ip_range] == false -%>
+<% if node['accel']['client_ip_range'] == false -%>
 disable
 <% else -%>
-<%= node[:accel][:client_ip_range] %>
+<%= node['accel']['client_ip_range'] %>
 <% end -%>
 
 [ip-pool]
-<% if node[:accel][:modules][:other].include?("ippool") -%>
-gw-ip-address=<%= node[:accel][:ip_pool][:gw_ip_address] %>
+<% if node['accel']['modules']['other'].include?("ippool") -%>
+gw-ip-address=<%= node['accel']['ip_pool']['gw_ip_address'] %>
 attr=Framed-Pool
   <% used = Array.new() -%>
-  <% node[:accel][:modules][:control].each do |control_module| -%>
-    <% if node[:accel][control_module][:ip_pool] != false -%>
-      <% if not used.include?(node[:accel][control_module][:ip_pool][:range]) -%>
-<%= node[:accel][control_module][:ip_pool][:range] %>,<%= node[:accel][control_module][:ip_pool][:name] %>
+  <% node['accel']['modules']['control'].each do |control_module| -%>
+    <% if node['accel'][control_module]['ip_pool'] != false -%>
+      <% if not used.include?(node['accel'][control_module]['ip_pool']['range']) -%>
+<%= node['accel'][control_module]['ip_pool']['range'] %>,<%= node['accel'][control_module]['ip_pool']['name'] %>
       <% end -%>
     <% end -%>
-    <% used.push(node[:accel][control_module][:ip_pool][:range]) -%>
+    <% used.push(node['accel'][control_module]['ip_pool']['range']) -%>
   <% end -%>
 <% end -%>
 
 [log]
-<% if node[:accel][:modules][:log].include?("file") -%>
-log-file=<%= node[:accel][:log][:dir] %>/accel-ppp.log
-log-emerg=<%= node[:accel][:log][:dir] %>/emerg.log
-log-fail-file=<%= node[:accel][:log][:dir] %>/auth-fail.log
+<% if node['accel']['modules']['log'].include?("file") -%>
+log-file=<%= node['accel']['log']['dir'] %>/accel-ppp.log
+log-emerg=<%= node['accel']['log']['dir'] %>/emerg.log
+log-fail-file=<%= node['accel']['log']['dir'] %>/auth-fail.log
 <% end -%>
-<% if node[:accel][:log][:debug] != false -%>
-log-debug=<%= node[:accel][:log][:debug] %>
+<% if node['accel']['log']['debug'] != false -%>
+log-debug=<%= node['accel']['log']['debug'] %>
 <% end -%>
-<% if node[:accel][:modules][:log].include?("syslog") -%>
-syslog=accel-pppd,<%= node[:accel][:log][:syslog_facility] %>
+<% if node['accel']['modules']['log'].include?("syslog") -%>
+syslog=accel-pppd,<%= node['accel']['log']['syslog_facility'] %>
 <% end -%>
-<% if node[:accel][:modules][:log].include?("tcp") -%>
-log-tcp=<%= node[:accel][:log][:tcp] %>
+<% if node['accel']['modules']['log'].include?("tcp") -%>
+log-tcp=<%= node['accel']['log']['tcp'] %>
 <% end -%>
-copy=<%= node[:accel][:log][:copy] %>
-color=<%= node[:accel][:log][:color] %>
-<% if node[:accel][:log][:per_session] != 0 -%>
+copy=<%= node['accel']['log']['copy'] %>
+color=<%= node['accel']['log']['color'] %>
+<% if node['accel']['log']['per_session'] != 0 -%>
 per-session=1
-per-session-dir=<%= node[:accel][:log][:per_session_dir] %>
-  <% if node[:accel][:log][:per_user_dir] != false -%>
-per-user-dir=<%= node[:accel][:log][:per_user_dir] %>
+per-session-dir=<%= node['accel']['log']['per_session_dir'] %>
+  <% if node['accel']['log']['per_user_dir'] != false -%>
+per-user-dir=<%= node['accel']['log']['per_user_dir'] %>
   <% end -%>
 <% end -%>
-level=<%= node[:accel][:log][:level] %>
+level=<%= node['accel']['log']['level'] %>
 
 [log-pgsql]
-<% if node[:accel][:modules][:log].include?("pgsql") -%>
+<% if node['accel']['modules']['log'].include?("pgsql") -%>
 conninfo=user=log
 log-table=log
 <% end -%>
 
 [pppd-compat]
-<% if node[:accel][:modules][:other].include?("pppd_compat") -%>
-  <% if node[:accel][:pppd_compat][:ip_pre_up] != false -%>
-ip-pre-up=<%= node[:accel][:ppp][:dir] %>/ip-pre-up
+<% if node['accel']['modules']['other'].include?("pppd_compat") -%>
+  <% if node['accel']['pppd_compat']['ip_pre_up'] != false -%>
+ip-pre-up=<%= node['accel']['ppp']['dir'] %>/ip-pre-up
   <% end -%>
-ip-up=<%= node[:accel][:ppp][:dir] %>/ip-up
-ip-down=<%= node[:accel][:ppp][:dir] %>/ip-down
-ip-change=<%= node[:accel][:ppp][:dir] %>/ip-change
+ip-up=<%= node['accel']['ppp']['dir'] %>/ip-up
+ip-down=<%= node['accel']['ppp']['dir'] %>/ip-down
+ip-change=<%= node['accel']['ppp']['dir'] %>/ip-change
 radattr-prefix=/var/run/radattr
-verbose=<%= node[:accel][:pppd_compat][:verbose] %>
+verbose=<%= node['accel']['pppd_compat']['verbose'] %>
 <% end -%>
 
 [chap-secrets]
-<% if node[:accel][:modules][:other].include?("chap-secrets") -%>
-gw-ip-address=<%= node[:accel][:chap_secrets][:gw_ip_address] %>
-chap-secrets=<%= node[:accel][:ppp][:dir] %>/chap-secrets
-encrypted=<%= node[:accel][:chap_secrets][:encrypted] %>
-username-hash=<%= node[:accel][:chap_secrets][:username_hash] %>
+<% if node['accel']['modules']['other'].include?("chap-secrets") -%>
+gw-ip-address=<%= node['accel']['chap_secrets']['gw_ip_address'] %>
+chap-secrets=<%= node['accel']['ppp']['dir'] %>/chap-secrets
+encrypted=<%= node['accel']['chap_secrets']['encrypted'] %>
+username-hash=<%= node['accel']['chap_secrets']['username_hash'] %>
 <% end -%>
 
 [shaper]
-<% if node[:accel][:modules][:other].include?("shaper") -%>
-attr=<%= node[:accel][:shaper][:attr] %>
-down-burst-factor=<%= node[:accel][:shaper][:down_burst_factor] %>
-up-burst-factor=<%= node[:accel][:shaper][:up_burst_factor] %>
-latency=<%= node[:accel][:shaper][:latency] %>
-mpu=<%= node[:accel][:shaper][:mpu] %>
-r2q=<%= node[:accel][:shaper][:r2q] %>
-quantum=<%= node[:accel][:shaper][:quantum] %>
-cburst=<%= node[:accel][:shaper][:cburst] %>
-ifb=<%= node[:accel][:shaper][:ifb] %>
-up-limiter=<%= node[:accel][:shaper][:up_limiter] %>
-down-limiter=<%= node[:accel][:shaper][:down_limiter] %>
-leaf-qdisc=<%= node[:accel][:shaper][:leaf_qdisc] %>
-verbose=<%= node[:accel][:shaper][:verbose] %>
+<% if node['accel']['modules']['other'].include?("shaper") -%>
+attr=<%= node['accel']['shaper']['attr'] %>
+down-burst-factor=<%= node['accel']['shaper']['down_burst_factor'] %>
+up-burst-factor=<%= node['accel']['shaper']['up_burst_factor'] %>
+latency=<%= node['accel']['shaper']['latency'] %>
+mpu=<%= node['accel']['shaper']['mpu'] %>
+r2q=<%= node['accel']['shaper']['r2q'] %>
+quantum=<%= node['accel']['shaper']['quantum'] %>
+cburst=<%= node['accel']['shaper']['cburst'] %>
+ifb=<%= node['accel']['shaper']['ifb'] %>
+up-limiter=<%= node['accel']['shaper']['up_limiter'] %>
+down-limiter=<%= node['accel']['shaper']['down_limiter'] %>
+leaf-qdisc=<%= node['accel']['shaper']['leaf_qdisc'] %>
+verbose=<%= node['accel']['shaper']['verbose'] %>
 <% end -%>
 
 [cli]
-telnet=<%= node[:accel][:cli][:telnet] %>
-tcp=<%= node[:accel][:cli][:tcp] %>
-<% if node[:accel][:cli][:password] != false -%>
-password=<%= node[:accel][:cli][:password] %>
+telnet=<%= node['accel']['cli']['telnet'] %>
+tcp=<%= node['accel']['cli']['tcp'] %>
+<% if node['accel']['cli']['password'] != false -%>
+password=<%= node['accel']['cli']['password'] %>
 <% end -%>
 
 [snmp]
-<% if node[:accel][:modules][:other].include?("net-snmp") -%>
-master=<%= node[:accel][:snmp][:master] %>
+<% if node['accel']['modules']['other'].include?("net-snmp") -%>
+master=<%= node['accel']['snmp']['master'] %>
 agent-name=accel-ppp
 <% end -%>
 
 [connlimit]
-<% if node[:accel][:modules][:other].include?("connlimit") -%>
-limit=<%= node[:accel][:connlimit][:limit] %>
-burst=<%= node[:accel][:connlimit][:burst] %>
-timeout=<%= node[:accel][:connlimit][:timeout] %>
+<% if node['accel']['modules']['other'].include?("connlimit") -%>
+limit=<%= node['accel']['connlimit']['limit'] %>
+burst=<%= node['accel']['connlimit']['burst'] %>
+timeout=<%= node['accel']['connlimit']['timeout'] %>
 <% end -%>
 
 [ipv6-pool]
-<% if node[:accel][:modules][:ipv6].include?("ipv6pool") -%>
+<% if node['accel']['modules']['ipv6'].include?("ipv6pool") -%>
 fc00:0:1::/48,64
 delegate=fc00:1::/36,48
 <% end -%>
 
 [ipv6-dns]
-<% if node[:accel][:modules][:ipv6].include?("ipv6_nd") -%>
+<% if node['accel']['modules']['ipv6'].include?("ipv6_nd") -%>
 fc00:1::1
 fc00:1::2
 fc00:1::3
@@ -281,7 +281,7 @@ dnssl=suffix2.local.net.
 <% end -%>
 
 [ipv6-dhcp]
-<% if node[:accel][:modules][:ipv6].include?("ipv6_dhcp") -%>
+<% if node['accel']['modules']['ipv6'].include?("ipv6_dhcp") -%>
 verbose=1
 pref-lifetime=604800
 valid-lifetime=2592000
