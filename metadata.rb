@@ -1,5 +1,5 @@
 name             "accel-ppp"
-maintainer       "PrivateWiFi"
+maintainer       "Rostyslav Fridman"
 maintainer_email "rostyslav.fridman@gmail.com"
 license          "All rights reserved"
 description      "Installs/Configures accel-pppd"
