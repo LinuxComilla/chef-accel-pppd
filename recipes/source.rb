@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-include_recipe "checkinstall"
+include_recipe "checkinstall::default"
 
 remote_file "#{Chef::Config['file_cache_path']}/accel-ppp-#{node['accel']['version']}.tar.bz2" do
   source   "#{node['accel']['url']}/accel-ppp-#{node['accel']['version']}.tar.bz2"
@@ -41,4 +41,5 @@ checkinstall_package "accel-ppp" do
   version node['accel']['version']
   binary_name "accel-pppd"
   cmake true
+  configure false
 end
